@@ -32,7 +32,7 @@
 /**
  * Path handling for Windows.
  */
-#if 0//__WIN32__
+#if defined(__WIN32__) && !defined(__CYGWIN__) /* MINGW32 */
 #define RLD_PATH_SEPARATOR        '\\'
 #define RLD_PATHSTR_SEPARATOR     ';'
 #define RLD_PATHSTR_SEPARATOR_STR ";"
