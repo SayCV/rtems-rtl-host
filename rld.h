@@ -32,7 +32,7 @@
 /**
  * Path handling for Windows.
  */
-#if __WIN32__
+#if 0//__WIN32__
 #define RLD_PATH_SEPARATOR        '\\'
 #define RLD_PATHSTR_SEPARATOR     ';'
 #define RLD_PATHSTR_SEPARATOR_STR ";"
