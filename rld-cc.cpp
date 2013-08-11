@@ -53,7 +53,7 @@ namespace rld
       {
         std::string cmd = "gcc";
         if (!exec_prefix.empty ())
-          cmd = exec_prefix + "-rtems" + rld::rtems_version () + '-' + cmd;
+          cmd = exec_prefix + "-rtemseabi" + rld::rtems_version () + '-' + cmd;
         args.push_back (cmd);
       }
       if (!march.empty ())
