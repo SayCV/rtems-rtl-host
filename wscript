@@ -55,6 +55,8 @@ def configure(conf):
     conf.env.SHOW_COMMANDS = show_commands
 
 def build(bld):
+    from waflib import Utils, Logs
+    
     #
     # Build the doxygen documentation.
     #
@@ -72,7 +74,9 @@ def build(bld):
     bld.includes = ['elftoolchain/libelf', 'elftoolchain/common', 'libiberty']
     if sys.platform == 'win32':
         bld.includes += ['win32']
-
+    if sys.platform == 'cygwin2':
+        bld.includes += ['win32']
+    
     #
     # Build flags.
     #
@@ -81,7 +85,13 @@ def build(bld):
     bld.cflags = ['-pipe', '-g'] + bld.optflags
     bld.cxxflags = ['-pipe', '-g'] + bld.optflags
     bld.linkflags = ['-g']
-
+    
+    if sys.platform == 'cygwin':
+        bld.cflags += ['-D__WIN32__']
+        bld.cxxflags += ['-D__WIN32__']
+        bld.linkflags += ['-D__WIN32__']
+    
+    #Logs.info('%s' % bld.cflags)
     #
     # Create each of the modules as object files each with their own
     # configurations.
@@ -113,7 +123,7 @@ def build(bld):
     # RTEMS Utilities.
     #
     rtems_utils = ['rtems-utils.cpp']
-
+    
     #
     # Build the linker.
     #
@@ -172,6 +182,7 @@ def bld_fastlz(bld):
         defines = ['FASTLZ_LEVEL=1'])
 
 def bld_libelf(bld):
+    from waflib import Utils, Logs
     libelf = 'elftoolchain/libelf/'
 
     #
@@ -180,6 +191,9 @@ def bld_libelf(bld):
     #
     if sys.platform == 'win32':
         m4_rule = 'type ${SRC} | m4 -D SRCDIR=../' + libelf[:-1] + '> ${TGT}"'
+        includes = ['win32']
+    if sys.platform == 'cygwin2':
+        m4_rule = 'm4 -D SRCDIR=../' + libelf[:-1] + ' ${SRC} > ${TGT}'
         includes = ['win32']
     else:
         m4_rule = 'm4 -D SRCDIR=../' + libelf[:-1] + ' ${SRC} > ${TGT}'
@@ -199,6 +213,8 @@ def bld_libelf(bld):
             rule   = './${SRC} > ${TGT}')
         bld.add_group ()
     elif sys.platform == 'win32':
+        host_source += [libelf + 'mmap_win32.c']
+    elif sys.platform == 'cygwin':
         host_source += [libelf + 'mmap_win32.c']
 
     bld.stlib(target = 'elf',
@@ -288,6 +304,8 @@ def conf_libiberty(conf):
 
 def bld_libiberty(bld):
     if sys.platform == 'win32':
+        pex_host = 'libiberty/pex-win32.c'
+    elif sys.platform == 'cygwin2':
         pex_host = 'libiberty/pex-win32.c'
     else:
         pex_host = 'libiberty/pex-unix.c'

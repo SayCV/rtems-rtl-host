@@ -47,8 +47,10 @@
 /*
  * Hack. Have to put this somewhere.
  */
+#if 0
 typedef int gid_t;
 typedef int uid_t;
+#endif
 
 /* Macros for counting and rounding. */
 #ifndef howmany
